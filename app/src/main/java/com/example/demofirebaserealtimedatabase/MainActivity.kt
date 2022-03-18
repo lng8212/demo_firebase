@@ -23,11 +23,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         database = FirebaseDatabase.getInstance("https://demofirebaserealtimedata-26fa3-default-rtdb.asia-southeast1.firebasedatabase.app")
         reference = database.getReference("user")
-        done.setOnClickListener{
+        btnDone.setOnClickListener{
             addUser()
         }
         btnGet.setOnClickListener{
-            val userName = txtName.text.toString()
+            val userName = edtName.text.toString()
             if(userName.isNotEmpty()){
                 readUser(userName)
             }
@@ -44,10 +44,20 @@ class MainActivity : AppCompatActivity() {
         btnRecognize.setOnClickListener {
             detector.processImage(FirebaseVisionImage.fromFilePath(applicationContext,imageUri!!))
                 .addOnSuccessListener { firebaseVisionText ->
-                    txt_recognize.text = firebaseVisionText.text
+                    txtRecognize.text = firebaseVisionText.text
                 }
                 .addOnFailureListener { e ->
                 }
+        }
+        if(intent.extras != null){
+            for (i in intent.extras!!.keySet()){
+                if(i.equals("title")){
+                    Log.e("MainActivity", "onCreate: ${intent.extras!!.getString(i)}", )
+                }
+                if(i.equals("body")){
+                    Log.e("MainActivity", "onCreate: ${intent.extras!!.getString(i)}", )
+                }
+            }
         }
 
     }
@@ -56,7 +66,7 @@ class MainActivity : AppCompatActivity() {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
             imageUri = data?.data
-            iv_choose.setImageURI(imageUri)
+            ivChoose.setImageURI(imageUri)
         }
     }
 
@@ -75,11 +85,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addUser(){
-            val info = Info(name.text.toString(),age.text.toString().toInt(), address.text.toString())
+            val info = Info(edtName.text.toString(),edtAge.text.toString().toInt(), edtAddress.text.toString())
             reference.child(info.name).setValue(info).addOnSuccessListener {
-                name.text.clear()
-                age.text.clear()
-                address.text.clear()
+                edtName.text.clear()
+                edtAge.text.clear()
+                edtAddress.text.clear()
                 Toast.makeText(applicationContext,"Successfully",Toast.LENGTH_LONG).show()
             }.addOnFailureListener {
                 Toast.makeText(applicationContext,"Error add user",Toast.LENGTH_LONG).show()

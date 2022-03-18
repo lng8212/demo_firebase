@@ -1,9 +1,7 @@
 package com.example.demofirebaserealtimedatabase
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
+import android.app.ActivityManager.RunningAppProcessInfo
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -18,12 +16,14 @@ class MyFirebaseService : FirebaseMessagingService() {
 
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
-        if(message.notification!=null){
-            sendNotification(message.notification!!.body)
-        }
+            sendNotification(message)
     }
 
-    private fun sendNotification(body: String?) {
+    private fun sendNotification(message: RemoteMessage) {
+        var title = ""
+        var body =""
+            title = message.notification!!.title.toString()
+            body = message.notification!!.body.toString()
         val intent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(this,0, intent,PendingIntent.FLAG_ONE_SHOT)
         val channelId ="111"
@@ -31,7 +31,7 @@ class MyFirebaseService : FirebaseMessagingService() {
         val notificationBuilder = NotificationCompat.Builder(this,channelId)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setLargeIcon(BitmapFactory.decodeResource(resources, R.drawable.ic_launcher_background))
-            .setContentTitle(channelId)
+            .setContentTitle(title)
             .setContentText(body)
             .setAutoCancel(true)
             .setSound(defaultSoundUri)
@@ -39,7 +39,7 @@ class MyFirebaseService : FirebaseMessagingService() {
             .setDefaults(Notification.DEFAULT_ALL)
             .setPriority(NotificationManager.IMPORTANCE_HIGH)
             .addAction(NotificationCompat.Action(android.R.drawable.sym_call_missed,"Cancel",
-                PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_CANCEL_CURRENT)))
+                    PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_CANCEL_CURRENT)))
             .addAction(NotificationCompat.Action(android.R.drawable.sym_call_outgoing,"OK",
                 PendingIntent.getActivity(this,0,intent,PendingIntent.FLAG_CANCEL_CURRENT)))
 
@@ -65,4 +65,20 @@ class MyFirebaseService : FirebaseMessagingService() {
     private fun sendRegistrationToServer(token: String) {
 
     }
+    private fun isAppIsInBackground(context: Context): Boolean {
+        var isInBackground = true
+        val am = context.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val runningProcesses = am.runningAppProcesses
+        for (processInfo in runningProcesses) {
+            if (processInfo.importance == RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (activeProcess in processInfo.pkgList) {
+                    if (activeProcess == context.packageName) {
+                        isInBackground = false
+                    }
+                }
+            }
+        }
+        return isInBackground
+    }
+
 }

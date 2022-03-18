@@ -20,27 +20,27 @@
         android:textSize="30sp"
         android:textStyle="bold"/>
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/edtName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="Name"/>
     <EditText
-        android:id="@+id/age"
+        android:id="@+id/edtAge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="Age"
         android:inputType="numberDecimal" />
     <EditText
-        android:id="@+id/address"
+        android:id="@+id/edtAddress"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
         android:hint="Address"/>
 
     <Button
-        android:id="@+id/done"
+        android:id="@+id/btnDone"
         android:layout_margin="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -59,7 +59,7 @@
         android:textSize="30sp"
         android:textStyle="bold"/>
     <EditText
-        android:id="@+id/txtName"
+        android:id="@+id/edtTen"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
@@ -91,7 +91,7 @@
             android:text="Choose image from library"/>
 
         <ImageView
-            android:id="@+id/iv_choose"
+            android:id="@+id/ivChoose"
             android:layout_width="300dp"
             android:layout_height="300dp"/>
 
@@ -103,7 +103,7 @@
             android:text="Find Text"/>
 
         <TextView
-            android:id="@+id/txt_recognize"
+            android:id="@+id/txtRecognize"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"/>
 
