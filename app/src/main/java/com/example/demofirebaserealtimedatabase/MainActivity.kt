@@ -1,17 +1,23 @@
 package com.example.demofirebaserealtimedatabase
 
+
+import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.database.*
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
     private lateinit var reference: DatabaseReference
+    private var imageUri: Uri? = null
+    private val PICK_IMAGE = 100
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -29,7 +35,31 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(applicationContext,"Name is empty",Toast.LENGTH_LONG).show()
             }
         }
+        btnChoose.setOnClickListener{
+            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            startActivityForResult(gallery, PICK_IMAGE)
+        }
+        val detector = FirebaseVision.getInstance()
+            .onDeviceTextRecognizer
+        btnRecognize.setOnClickListener {
+            detector.processImage(FirebaseVisionImage.fromFilePath(applicationContext,imageUri!!))
+                .addOnSuccessListener { firebaseVisionText ->
+                    txt_recognize.text = firebaseVisionText.text
+                }
+                .addOnFailureListener { e ->
+                }
+        }
+
     }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
+            imageUri = data?.data
+            iv_choose.setImageURI(imageUri)
+        }
+    }
+
 
     private fun readUser(userName: String) {
         Log.e("readUser", "readUser: ${userName}")
